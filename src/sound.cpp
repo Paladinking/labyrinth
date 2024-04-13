@@ -39,4 +39,11 @@ void MySound::SetVolume(float volume) {
     
 }
 
+Sound* MySound::getSound(int i) {
+    if(i < sounds.size()) {
+        return &sounds[i];
+    }
+    return nullptr;
+}
+
 
