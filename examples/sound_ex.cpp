@@ -107,7 +107,7 @@ int main(void)
     InitAudioDevice(); 
     //Load sounds
     MySound stepsWalk = MySound( { LoadSound("resources/Step1.mp3"), LoadSound("resources/Step2.mp3") , LoadSound("resources/Step3.mp3")});
-     MySound stepsRun = MySound( { LoadSound("resources/Run(1).mp3"), LoadSound("resources/Run(2).mp3") , LoadSound("resources/Run(2).mp3")});
+    MySound stepsRun = MySound( { LoadSound("resources/Run(1).mp3"), LoadSound("resources/Run(2).mp3") , LoadSound("resources/Run(2).mp3")});
     MySound monsterSteps = MySound( { LoadSound("resources/M3Step(1).mp3"), LoadSound("resources/M3Step(2).mp3") });
     MySound chainRattle = MySound( { LoadSound("resources/Chain(1).mp3"), LoadSound("resources/Chain(2).mp3"), LoadSound("resources/Chain(3).mp3"), LoadSound("resources/Chain(4).mp3") });
     SetConfigFlags(FLAG_VSYNC_HINT);
@@ -118,7 +118,7 @@ int main(void)
 
     Maze maze{};
     // Main game loop
-    
+    stepsWalk.SetVolume(100);
     while (!WindowShouldClose())        // Detect window close button or ESC key
     {
         if(IsKeyDown(KEY_RIGHT)) {
@@ -131,6 +131,7 @@ int main(void)
          if(IsKeyDown(KEY_UP)) {
             stepsRun.PlayMySound();
         }
+        
 
 
        

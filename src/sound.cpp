@@ -31,4 +31,12 @@ void MySound::PlayMySound() {
 
 }
 
+void MySound::SetVolume(float volume) {
+    for (size_t i = 0; i < sounds.size(); i++)
+    {
+        SetSoundVolume(sounds[i], volume);
+    }
+    
+}
+
 
