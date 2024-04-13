@@ -1,5 +1,6 @@
 #include "maze.h"
 #include <unordered_set>
+#include <iostream>
 
 void generate_maze(Maze &maze) {
     std::vector<std::array<bool, TILE_HEIGHT>> visited{};
@@ -141,13 +142,33 @@ void Maze::draw() {
     for (int i = 0; i < map.size(); i++) {
         for (int j = 0; j < map[0].size(); j++) {
             if (map[i][j]) {
+                Color color = (i % 2 == 0) ? ((j % 2 == 0) ? LIGHTGRAY : DARKGRAY) : ((j % 2 == 0) ? GRAY : BLACK);
                 float cube_height{7};
-                float cube_width{4};
-                Vector3 cubePosition = {10 + cube_width * i, 0.0f,
-                                        10 + cube_width * j};
-                DrawCube(cubePosition, cube_width, cube_height, cube_width,
-                         GRAY);
+                Vector3 cubePosition = {TILE_SIZE * i + TILE_SIZE / 2, 0.0f,
+                                        TILE_SIZE * j + TILE_SIZE / 2};
+                DrawCube(cubePosition, TILE_SIZE, cube_height, TILE_SIZE, color);
             }
         }
     }
 }
+
+bool Maze::free_at(float x, float y, float radius) {
+    float x_cors[] = {x + radius, x + radius, x - radius, x - radius};
+    float y_cors[] = {y + radius, y - radius, y + radius, y - radius};
+    for (int i = 0; i < TILE_SIZE; ++i) {
+        int tx = x_cors[i] / TILE_SIZE;
+        int ty = y_cors[i] / TILE_SIZE;
+        if (tx < 0 || ty < 0 || tx >= TILE_WIDTH || ty >= TILE_HEIGHT) {
+            continue;
+        }
+        if (!at(tx, ty)) {
+            continue;
+        }
+        Rectangle r = {tx * TILE_SIZE, ty * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+        if (CheckCollisionCircleRec({x, y}, radius, r)) {
+            return false;
+        }
+    }
+    return true;
+}
+

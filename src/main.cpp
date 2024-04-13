@@ -4,8 +4,6 @@
 #include <cstdlib>
 #include <iostream>
 
-#define MAX_COLUMNS 20
-
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
@@ -25,8 +23,8 @@ int main(void) {
     Maze maze{};
 
     Camera camera = {0};
-    camera.position = {0.0f, 2.0f, 4.0f}; // Camera position
-    camera.target = {0.0f, 2.0f, 0.0f};   // Camera looking at point
+    camera.position = {TILE_SIZE / 2, 2.0f, TILE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}; // Camera position
+    camera.target = {TILE_SIZE + TILE_SIZE / 2, 2.0f, TILE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2};   // Camera looking at point
     camera.up = {0.0f, 1.0f,
                  0.0f};  // Camera up vector (rotation towards target)
     camera.fovy = 60.0f; // Camera field-of-view Y
@@ -41,25 +39,7 @@ int main(void) {
     // Main game loop
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
-
-        UpdateCameraPro(
-            &camera,
-            {
-                (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) *
-                        move_speed - // Move forward-backward
-                    (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) * move_speed,
-                (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) *
-                        move_speed - // Move right-left
-                    (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) * move_speed,
-                0.0f // Move up-down
-            },
-            {
-                GetMouseDelta().x * 0.2f, // Rotation: yaw
-                GetMouseDelta().y * 0.2f, // Rotation: pitch
-                0.0f                      // Rotation: roll
-            },
-            GetMouseWheelMove() * 2.0f); // Move to target (zoom)
-
+        Camera old_pos {camera};
         if (IsGamepadAvailable(0)) {
             float move_x = -GetGamepadAxisMovement(0, GAMEPAD_AXIS_LEFT_Y);
             float move_y = GetGamepadAxisMovement(0, GAMEPAD_AXIS_LEFT_X);
@@ -78,19 +58,27 @@ int main(void) {
             rot_x *= 1.7;
             rot_y *= 1.7;
 
-            UpdateCameraPro(&camera,
-                            {
-                                (move_x), // Move forward-backward
-                                (move_y), // Move right-left
-                                0.0f      // Move up-down
-                            },
-                            {
-                                rot_x, // Rotation: yaw
-                                rot_y, // Rotation: pitch
-                                0.0f   // Rotation: roll
-                            },
-                            GetMouseWheelMove() * 2.0f);
+            UpdateCameraPro(&camera, {move_x, move_y, 0.0f},
+                            {rot_x, rot_y, 0.0f}, GetMouseWheelMove() * 2.0f);
+        } else {
+            UpdateCameraPro(
+                &camera,
+                {(IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) * move_speed -
+                     (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) * move_speed,
+                 (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) * move_speed -
+                     (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) * move_speed,
+                 0.0f},
+                {
+                    GetMouseDelta().x * 0.2f, // Rotation: yaw
+                    GetMouseDelta().y * 0.2f, // Rotation: pitch
+                    0.0f                      // Rotation: roll
+                },
+                GetMouseWheelMove() * 2.0f); // Move to target (zoom)
         }
+        if (!maze.free_at(camera.position.x, camera.position.z, 1.0f)) {
+            camera = old_pos;
+        }
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
