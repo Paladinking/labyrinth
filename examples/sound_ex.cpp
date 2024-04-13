@@ -118,7 +118,6 @@ int main(void)
 
     Maze maze{};
     // Main game loop
-    stepsWalk.SetVolume(100);
     while (!WindowShouldClose())        // Detect window close button or ESC key
     {
         if(IsKeyDown(KEY_RIGHT)) {
