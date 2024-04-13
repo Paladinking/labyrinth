@@ -34,10 +34,10 @@ int main(void) {
 
   // Define the camera to look into our 3d world (position, target, up vector)
   Camera camera = {0};
-  camera.position = (Vector3){0.0f, 2.0f, 4.0f}; // Camera position
-  camera.target = (Vector3){0.0f, 2.0f, 0.0f};   // Camera looking at point
+  camera.position = {0.0f, 2.0f, 4.0f}; // Camera position
+  camera.target = {0.0f, 2.0f, 0.0f};   // Camera looking at point
   camera.up =
-      (Vector3){0.0f, 1.0f, 0.0f}; // Camera up vector (rotation towards target)
+      {0.0f, 1.0f, 0.0f}; // Camera up vector (rotation towards target)
   camera.fovy = 60.0f;             // Camera field-of-view Y
   camera.projection = CAMERA_PERSPECTIVE; // Camera projection type
 
@@ -50,10 +50,10 @@ int main(void) {
 
   for (int i = 0; i < MAX_COLUMNS; i++) {
     heights[i] = (float)GetRandomValue(1, 12);
-    positions[i] = (Vector3){(float)GetRandomValue(-15, 15), heights[i] / 2.0f,
+    positions[i] = {(float)GetRandomValue(-15, 15), heights[i] / 2.0f,
                              (float)GetRandomValue(-15, 15)};
     colors[i] =
-        (Color){static_cast<unsigned char>(GetRandomValue(20, 255)),
+        {static_cast<unsigned char>(GetRandomValue(20, 255)),
                 static_cast<unsigned char>(GetRandomValue(10, 55)), 30, 255};
   }
 
@@ -70,22 +70,22 @@ int main(void) {
     // Switch camera mode
     if (IsKeyPressed(KEY_ONE)) {
       cameraMode = CAMERA_FREE;
-      camera.up = (Vector3){0.0f, 1.0f, 0.0f}; // Reset roll
+      camera.up = {0.0f, 1.0f, 0.0f}; // Reset roll
     }
 
     if (IsKeyPressed(KEY_TWO)) {
       cameraMode = CAMERA_FIRST_PERSON;
-      camera.up = (Vector3){0.0f, 1.0f, 0.0f}; // Reset roll
+      camera.up = {0.0f, 1.0f, 0.0f}; // Reset roll
     }
 
     if (IsKeyPressed(KEY_THREE)) {
       cameraMode = CAMERA_THIRD_PERSON;
-      camera.up = (Vector3){0.0f, 1.0f, 0.0f}; // Reset roll
+      camera.up = {0.0f, 1.0f, 0.0f}; // Reset roll
     }
 
     if (IsKeyPressed(KEY_FOUR)) {
       cameraMode = CAMERA_ORBITAL;
-      camera.up = (Vector3){0.0f, 1.0f, 0.0f}; // Reset roll
+      camera.up = {0.0f, 1.0f, 0.0f}; // Reset roll
     }
 
     // Switch camera projection
@@ -95,9 +95,9 @@ int main(void) {
         cameraMode = CAMERA_THIRD_PERSON;
         // Note: The target distance is related to the render distance in the
         // orthographic projection
-        camera.position = (Vector3){0.0f, 2.0f, -100.0f};
-        camera.target = (Vector3){0.0f, 2.0f, 0.0f};
-        camera.up = (Vector3){0.0f, 1.0f, 0.0f};
+        camera.position = {0.0f, 2.0f, -100.0f};
+        camera.target = {0.0f, 2.0f, 0.0f};
+        camera.up = {0.0f, 1.0f, 0.0f};
         camera.projection = CAMERA_ORTHOGRAPHIC;
         camera.fovy = 20.0f; // near plane width in CAMERA_ORTHOGRAPHIC
         CameraYaw(&camera, -135 * DEG2RAD, true);
@@ -105,9 +105,9 @@ int main(void) {
       } else if (camera.projection == CAMERA_ORTHOGRAPHIC) {
         // Reset to default view
         cameraMode = CAMERA_THIRD_PERSON;
-        camera.position = (Vector3){0.0f, 2.0f, 10.0f};
-        camera.target = (Vector3){0.0f, 2.0f, 0.0f};
-        camera.up = (Vector3){0.0f, 1.0f, 0.0f};
+        camera.position = {0.0f, 2.0f, 10.0f};
+        camera.target = {0.0f, 2.0f, 0.0f};
+        camera.up = {0.0f, 1.0f, 0.0f};
         camera.projection = CAMERA_PERSPECTIVE;
         camera.fovy = 60.0f;
       }
@@ -124,7 +124,7 @@ int main(void) {
     // directly provided as input parameters, with this approach, rcamera module
     // is internally independent of raylib inputs
     UpdateCameraPro(&camera,
-                    (Vector3){
+                    {
                         (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) *
                                 0.1f - // Move forward-backward
                             (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) * 0.1f,
@@ -133,7 +133,7 @@ int main(void) {
                             (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) * 0.1f,
                         0.0f // Move up-down
                     },
-                    (Vector3){
+                    {
                         GetMouseDelta().x * 0.2f, // Rotation: yaw
                         GetMouseDelta().y * 0.2f, // Rotation: pitch
                         0.0f                      // Rotation: roll
@@ -156,12 +156,12 @@ int main(void) {
 
 
       UpdateCameraPro(&camera,
-                      (Vector3){
+                      {
                           (move_x), // Move forward-backward
                           (move_y), // Move right-left
                           0.0f      // Move up-down
                       },
-                      (Vector3){
+                      {
                           rot_x, // Rotation: yaw
                           rot_y, // Rotation: pitch
                           0.0f      // Rotation: roll
@@ -179,13 +179,13 @@ int main(void) {
 
     BeginMode3D(camera);
 
-    DrawPlane((Vector3){0.0f, 0.0f, 0.0f}, (Vector2){32.0f, 32.0f},
+    DrawPlane({0.0f, 0.0f, 0.0f}, {32.0f, 32.0f},
               LIGHTGRAY); // Draw ground
-    DrawCube((Vector3){-16.0f, 2.5f, 0.0f}, 1.0f, 5.0f, 32.0f,
+    DrawCube({-16.0f, 2.5f, 0.0f}, 1.0f, 5.0f, 32.0f,
              BLUE); // Draw a blue wall
-    DrawCube((Vector3){16.0f, 2.5f, 0.0f}, 1.0f, 5.0f, 32.0f,
+    DrawCube({16.0f, 2.5f, 0.0f}, 1.0f, 5.0f, 32.0f,
              LIME); // Draw a green wall
-    DrawCube((Vector3){0.0f, 2.5f, 16.0f}, 32.0f, 5.0f, 1.0f,
+    DrawCube({0.0f, 2.5f, 16.0f}, 32.0f, 5.0f, 1.0f,
              GOLD); // Draw a yellow wall
 
     // Draw some cubes around
