@@ -15,9 +15,8 @@
 ********************************************************************************************/
 
 #include "raylib.h"
-#include "rcamera.h"
 #include <array>
-#include <iostream>
+#include <cstddef>
 
 #define MAX_COLUMNS 20
 
@@ -25,56 +24,73 @@ constexpr int TILE_SIZE = 10;
 constexpr int TILE_WIDTH = 80;
 constexpr int TILE_HEIGHT = 80;
 
+enum Direction: int {
+    LEFT=0, UP=1, RIGHT=2, DOWN=3
+};
 
-void generate_maze(std::array<bool, TILE_WIDTH * TILE_HEIGHT> &maze) {
-    auto at = [](auto& maze, int x, int y) -> bool& {
-        return maze[x + TILE_WIDTH * y];
-    }; 
-
-    for (int x = 0; x < TILE_WIDTH; ++x) {
-        at(maze, x, 0) = true;
-        at(maze, x, TILE_HEIGHT - 1) = true;
+class Maze {
+private:    
+    std::array<std::array<bool, TILE_WIDTH>, TILE_HEIGHT> map;
+public:
+    bool at(unsigned x, unsigned y){
+        return map[x][y];
     }
-    for (int y = 1; y < TILE_HEIGHT - 1; ++y) {
-        at(maze, 0, y) = true;
-        at(maze, TILE_WIDTH - 1, y) = true;
-    }
+    
+    Maze() : map{} {
+        for (int x = 0; x < TILE_WIDTH; ++x) {
+            map[x][0] = true;
+            map[x][TILE_HEIGHT - 1] = true;
+        }
+        for (int y = 1; y < TILE_HEIGHT - 1; ++y) {
+            map[0][y] = true;
+            map[TILE_HEIGHT - 1][y] = true;
+        }
 
-    int x = 0;
-    int y = TILE_HEIGHT / 2;
-    at(maze, x, y) = false;
-    ++x;
-    enum Direction: int {
-        LEFT=0, UP=1, RIGHT=2, DOWN=3
+        int x = 0;
+        int y = TILE_HEIGHT / 2;
+        map[x][TILE_HEIGHT / 2] = false;
+        ++x;
+
+        Direction dir = RIGHT;
+        while (true) {
+            switch (dir) {
+                case LEFT:
+                case RIGHT:
+                    map[x][y] = false;
+                    map[x][y - 1] = true;
+                    map[x][y + 1] = true;
+                    x += dir == LEFT ? -1 : 1;
+                    break;
+                case UP:
+                case DOWN:
+                    map[x][y] = false;
+                    map[x][y - 1] = true;
+                    map[x][y + 1] = true;
+                    y += dir == UP ? -1 : 1;
+                    break;
+            }
+            if (GetRandomValue(0, 99) > 70) {
+                int delta = GetRandomValue(0, 1) == 1 ? -1 : 1;
+                Direction new_dir = static_cast<Direction>((static_cast<int>(dir) + delta) % 4);
+            }
+            if (x == 0 || y == 0 || x == TILE_WIDTH - 1 || y == TILE_HEIGHT - 1) {
+                break;
+            }
+        }
+
     };
 
-    Direction dir = RIGHT;
-    while (true) {
-        switch (dir) {
-            case LEFT:
-            case RIGHT:
-                at(maze, x, y) = false;
-                at(maze, x, y - 1) = true;
-                at(maze, x, y + 1) = true;
-                x += dir == LEFT ? -1 : 1;
-                break;
-            case UP:
-            case DOWN:
-                at(maze, x, y) = false;
-                at(maze, x - 1, y) = true;
-                at(maze, x + 1, y) = true;
-                y += dir == UP ? -1 : 1;
-                break;
-        }
-        if (GetRandomValue(0, 99) > 70) {
-            int delta = GetRandomValue(0, 1) == 1 ? -1 : 1;
-            Direction new_dir = static_cast<Direction>((static_cast<int>(dir) + delta) % 4);
-        }
-        if (x == 0 || y == 0 || x == TILE_WIDTH - 1 || y == TILE_HEIGHT - 1) {
-            break;
+    void draw(){
+        ClearBackground(RAYWHITE);
+
+        for (int i = 0; i < TILE_WIDTH; ++i) {
+            for (int j = 0; j < TILE_HEIGHT; ++j) {
+                Color color = map[i][j] ? BLACK : WHITE;
+                DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, color);
+            }
         }
     }
-}
+};
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -86,30 +102,19 @@ int main(void)
     const int screenWidth = 800;
     const int screenHeight = 800;
 
-    std::array<bool, TILE_WIDTH * TILE_HEIGHT> maze{};
 
     SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 3d camera first person");
-    generate_maze(maze);
-
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
+    Maze maze{};
     // Main game loop
     while (!WindowShouldClose())        // Detect window close button or ESC key
     {
         BeginDrawing();
-
-            ClearBackground(RAYWHITE);
-    
-            for (int i = 0; i < TILE_WIDTH; ++i) {
-                for (int j = 0; j < TILE_HEIGHT; ++j) {
-                    Color color = maze[i + TILE_WIDTH * j] ? BLACK : WHITE;
-                    DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, color);
-                }
-            }
-
+            maze.draw();
         EndDrawing();
         //----------------------------------------------------------------------------------
     }
