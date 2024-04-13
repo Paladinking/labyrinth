@@ -105,8 +105,11 @@ int main(void)
     const int screenHeight = 800;
 
     InitAudioDevice(); 
-    MySound steps = MySound( { LoadSound("resources/Step1.mp3"), LoadSound("resources/Step2.mp3") , LoadSound("resources/Step3.mp3")});
-
+    //Load sounds
+    MySound stepsWalk = MySound( { LoadSound("resources/Step1.mp3"), LoadSound("resources/Step2.mp3") , LoadSound("resources/Step3.mp3")});
+     MySound stepsRun = MySound( { LoadSound("resources/Run(1).mp3"), LoadSound("resources/Run(2).mp3") , LoadSound("resources/Run(2).mp3")});
+    MySound monsterSteps = MySound( { LoadSound("resources/M3Step(1).mp3"), LoadSound("resources/M3Step(2).mp3") });
+    MySound chainRattle = MySound( { LoadSound("resources/Chain(1).mp3"), LoadSound("resources/Chain(2).mp3"), LoadSound("resources/Chain(3).mp3"), LoadSound("resources/Chain(4).mp3") });
     SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 3d camera first person");
 
@@ -115,22 +118,20 @@ int main(void)
 
     Maze maze{};
     // Main game loop
+    
     while (!WindowShouldClose())        // Detect window close button or ESC key
     {
-        if(IsKeyPressed(KEY_RIGHT)) {
-            walking = true;
+        if(IsKeyDown(KEY_RIGHT)) {
+             monsterSteps.PlayMySound();
+             chainRattle.PlayMySound();
         }
-         if(IsKeyReleased(KEY_RIGHT)) {
-            walking = false;
+         if(IsKeyDown(KEY_LEFT)) {
+            stepsWalk.PlayMySound();
+        }
+         if(IsKeyDown(KEY_UP)) {
+            stepsRun.PlayMySound();
         }
 
-        
-        
-        //Play sound from sound array
-        if(walking) {
-            steps.PlayMySound();
-            std::cout << 1;
-        }
 
        
         BeginDrawing();
