@@ -58,7 +58,7 @@ int main(void) {
     Camera camera = {0};
 
     Vector2 start_pos = maze.get_start();
-    camera.position = {start_pos.x, 20.0f, start_pos.y}; // Camera position
+    camera.position = {start_pos.x, 2.0f, start_pos.y}; // Camera position
     camera.target = {TILE_SIZE + start_pos.x, 2.0f, start_pos.y};   // Camera looking at point
 
     camera.up = {0.0f, 1.0f,
