@@ -40,12 +40,11 @@ int main(void) {
 
     Light lights[MAX_LIGHTS] = { 0 };
     float offset = 7;
-    lights[0] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
-    lights[1] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 1 * offset, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
-    lights[2] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 2 * offset, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
-    lights[3] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 3 * offset, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
-    lights[4] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 4 * offset, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
-    // lights[1] = CreateLight(LIGHT_DIRECTIONAL, (Vector3){1, -1.0f, 1}, Vector3Zero(), RED, shader);
+    lights[0] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 0 * offset, TILE_SIZE * 2, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
+    lights[1] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 1 * offset, TILE_SIZE * 2, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
+    lights[2] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 2 * offset, TILE_SIZE * 2, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
+    lights[3] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 3 * offset, TILE_SIZE * 2, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
+    lights[4] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 4 * offset, TILE_SIZE * 2, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
     // ^^^^^^^ FOR SHADERS =======================
     
     Maze maze{&wall};

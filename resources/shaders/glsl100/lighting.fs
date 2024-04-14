@@ -53,7 +53,7 @@ void main()
         if (lights[i].enabled == 1)
         {
             vec3 light = vec3(0.0);
-            // float lightDist = 1.0;
+            float lightDist = 1.0;
 
             if (lights[i].type == LIGHT_DIRECTIONAL)
             {
@@ -67,7 +67,7 @@ void main()
                 light = normalize(light);
             }
 
-            float NdotL = max(dot(normal, light), 0.0);
+            float NdotL = max(dot(normal, light), 0.0)/lightDist;
             lightDot += lights[i].color.rgb*NdotL;
 
             float specCo = 0.0;
