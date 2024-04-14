@@ -160,12 +160,12 @@ bool Minotaur::tick(Maze &maze, float px, float py, float p_raduis) {
         pos = path.back();
         delta = {pos.x - x, pos.y - y};
     }
-    float move_speed = 0.3f;
+    float move_speed = 0.5f;
     delta = Vector2Normalize(delta);
 
     if (rushing) {
         std::cout << x << ',' << y << std::endl;
-        move_speed *= 3;
+        move_speed = 1.0f;
     } else {
 
 
@@ -175,10 +175,12 @@ bool Minotaur::tick(Maze &maze, float px, float py, float p_raduis) {
             path.clear();
             path.push_back(rush);
             std::cout << "Rush from " << x << ',' << y << " to " << rush.x << ',' << rush.y << std::endl;
-            move_speed *= 3;
+            move_speed 1.0f;
             rushing = true;
         }
     }
+    float angle = Vector2Angle({delta.x, delta.y}, {0.0f, 1.0f});
+    model.transform = MatrixRotateY(-angle);
 
     x += delta.x * move_speed;
     y += delta.y * move_speed;
