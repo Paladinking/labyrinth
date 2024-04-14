@@ -6,7 +6,7 @@
 #include <queue>
 #include <unordered_set>
 
-Minotaur::Minotaur(float x, float y) : x(x), y(y), last_update(0) {}
+Minotaur::Minotaur(float x, float y) : x(x), y(y), last_update(0), anims_count{0}, anim_index{2}, anim_current_frame{0} {}
 
 void Minotaur::calculate_path(Maze &maze, float px, float py) {
     int tx = px / TILE_SIZE;
@@ -169,15 +169,15 @@ bool Minotaur::tick(Maze &maze, float px, float py, float p_raduis) {
     } else {
 
 
-    Vector2 rush;
-    if (can_rush_player(maze, px, py, delta.x, delta.y, rush)) {
-        rushing = false;
-        path.clear();
-        path.push_back(rush);
-        std::cout << "Rush from " << x << ',' << y << " to " << rush.x << ',' << rush.y << std::endl;
-        move_speed *= 3;
-        rushing = true;
-    }
+        Vector2 rush;
+        if (can_rush_player(maze, px, py, delta.x, delta.y, rush)) {
+            rushing = false;
+            path.clear();
+            path.push_back(rush);
+            std::cout << "Rush from " << x << ',' << y << " to " << rush.x << ',' << rush.y << std::endl;
+            move_speed *= 3;
+            rushing = true;
+        }
     }
 
     x += delta.x * move_speed;
@@ -189,4 +189,21 @@ bool Minotaur::tick(Maze &maze, float px, float py, float p_raduis) {
     return false;
 }
 
-void Minotaur::draw() { DrawCube({x, 0.0f, y}, 1.0f, 1.0f, 1.0f, RED); }
+void Minotaur::load_animation_stuff() {
+    model = LoadModel("assets/minotaur.m3d");
+    model_animations = LoadModelAnimations("assets/minotaur.m3d", &anims_count);
+}
+
+void Minotaur::unload_animation_stuff() {
+    UnloadModel(model);
+    UnloadModelAnimations(model_animations, anims_count);
+}
+
+void Minotaur::draw() {
+    // DrawCube({x, 0.0f, y}, 1.0f, 1.0f, 1.0f, RED);
+
+    ModelAnimation anim = model_animations[anim_index];
+    anim_current_frame = (anim_current_frame + 1) % anim.frameCount;
+    UpdateModelAnimation(model, anim, anim_current_frame);
+    DrawModel(model, {x, 0.0f, y}, 5.0f, WHITE);
+}

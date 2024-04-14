@@ -11,6 +11,10 @@ public:
 
     bool tick(Maze& maze, float px, float py, float prad);
 
+    void load_animation_stuff();
+
+    void unload_animation_stuff();
+
 private:
     void calculate_path(Maze& maze, float px, float py);
 
@@ -18,6 +22,11 @@ private:
 public:
     float x;
     float y;
+    Model model;
+    ModelAnimation *model_animations;
+    int anims_count;
+    unsigned anim_index;
+    unsigned anim_current_frame;
 
     bool rushing = false;
 

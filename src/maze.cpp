@@ -82,6 +82,13 @@ void generate_maze(Maze &maze) {
                 if (!visited[x + dx(side)][y + dy(side)]) {
                     mark(maze, x + dx(side), y + dy(side)) = true;
                 }
+                if (x + dx(dir) > 0 && x + dx(dir) < MAZE_WIDTH - 1 &&
+                    y + dy(dir) > 0 && y + dy(dir) < MAZE_HEIGHT - 1 &&
+                    visited[x + dx(dir)][y + dy(dir)] &&
+                    !maze.at(x + dx(dir), y + dy(dir)) ) {// &&
+                    // GetRandomValue(0, 1) > -1) {
+                        maze.at(x, y) = false;
+                }
                 break;
             }
             maze.at(x, y) = false;
@@ -96,6 +103,7 @@ void generate_maze(Maze &maze) {
         }
         while (true) {
             if (potential_roots.size() == 0) {
+                maze.at(0, MAZE_HEIGHT / 2) = false;
                 return;
             }
             int ix = GetRandomValue(0, potential_roots.size() - 1);
@@ -135,6 +143,7 @@ void generate_maze(Maze &maze) {
             }
         }
     } while (marked < MAZE_WIDTH * MAZE_HEIGHT);
+    maze.at(0, MAZE_HEIGHT / 2) = false;
 
 }
 
