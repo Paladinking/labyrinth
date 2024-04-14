@@ -64,6 +64,8 @@ int main(void) {
     DisableCursor();  // Limit cursor to relative movement inside the window
 
     float move_speed = 0.3;
+    bool alive = true;
+    float rolled = 0.0f;
 
     //--------------------------------------------------------------------------------------
     // Main game loop
@@ -102,23 +104,32 @@ int main(void) {
         lights[0].position = Vector3{cameraPos[0], TILE_SIZE, cameraPos[2]};
 
         for (int i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(shader, lights[i]);
+        if (alive) {
+            Vector3 forward = GetCameraForward(&camera);
+            forward.y = 0;
+            forward = Vector3Scale(Vector3Normalize(forward), dx);
+            Vector3 right = GetCameraRight(&camera);
+            right.y = 0;
+            right = Vector3Scale(Vector3Normalize(right), dy);
+            Vector3 movement = Vector3Add(forward, right);
+            CameraPitch(&camera, -rot_y*DEG2RAD, true, false, false);
+            CameraYaw(&camera, -rot_x*DEG2RAD, false);
 
-        Vector3 forward = GetCameraForward(&camera);
-        forward.y = 0;
-        forward = Vector3Scale(Vector3Normalize(forward), dx);
-        Vector3 right = GetCameraRight(&camera);
-        right.y = 0;
-        right = Vector3Scale(Vector3Normalize(right), dy);
-        Vector3 movement = Vector3Add(forward, right);
-        CameraPitch(&camera, -rot_y*DEG2RAD, true, false, false);
-        CameraYaw(&camera, -rot_x*DEG2RAD, false);
-
-        maze.adjust_movement(camera.position.x, camera.position.z, movement.x, movement.z, 1.0f);
+            maze.adjust_movement(camera.position.x, camera.position.z, movement.x, movement.z, 1.0f);
         
-        camera.position = Vector3Add(movement, camera.position);
-        camera.target = Vector3Add(movement, camera.target);
-
-        enemy.tick(maze, camera.position.x, camera.position.z, 1.0f);
+            camera.position = Vector3Add(movement, camera.position);
+            camera.target = Vector3Add(movement, camera.target);
+        }
+        
+        if (enemy.tick(maze, camera.position.x, camera.position.z, 1.0f)) {
+            alive = false;
+            camera.target = {enemy.x, 2.0f, enemy.y};
+        }
+        if (!alive && rolled < PI / 2) {
+            CameraRoll(&camera, 0.3f);
+            rolled += 0.3f;
+            std::cout << rolled << std::endl;
+        }
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
@@ -136,6 +147,9 @@ int main(void) {
         DrawModelEx(wall, {0, 0, 0}, {0, 0, 0}, 0, {5, 5, 5}, WHITE);
 
         EndMode3D();
+        if (!alive) {
+            DrawText("Game Over", 200, 100, 40, RED);
+        }
 
         EndDrawing();
     }

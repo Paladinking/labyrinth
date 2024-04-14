@@ -71,7 +71,7 @@ bool Minotaur::can_rush_player(Maze& maze, float px, float py, float dx, float d
     int ty = y / TILE_SIZE;
     int ptx = px / TILE_SIZE;
     int pty = py / TILE_SIZE;
-    end = {px, py};
+    end = {ptx * TILE_SIZE + TILE_SIZE / 2, pty * TILE_SIZE + TILE_SIZE / 2};
     if (dx > 0.7f) {
         if (ptx < tx || ty != pty) {
             return false;
@@ -137,25 +137,25 @@ bool Minotaur::can_rush_player(Maze& maze, float px, float py, float dx, float d
     return false;
 }
 
-void Minotaur::tick(Maze &maze, float px, float py, float p_raduis) {
+bool Minotaur::tick(Maze &maze, float px, float py, float p_raduis) {
     double now = GetTime();
     if (now - last_update > 5.0f && !rushing) {
         calculate_path(maze, px, py);
         last_update = now;
     }
     if (path.empty()) {
-        return;
+        return false;
     }
     Vector2 pos = path.back();
     Vector2 delta = {pos.x - x, pos.y - y};
-    if (Vector2LengthSqr(delta) < 0.1f) {
+    if (Vector2LengthSqr(delta) < 0.2f) {
         path.pop_back();
         if (path.empty()) {
             if (rushing) {
                 rushing = false;
                 last_update = now;
             }
-            return;
+            return false;
         }
         pos = path.back();
         delta = {pos.x - x, pos.y - y};
@@ -182,6 +182,11 @@ void Minotaur::tick(Maze &maze, float px, float py, float p_raduis) {
 
     x += delta.x * move_speed;
     y += delta.y * move_speed;
+    if (static_cast<int>(x / TILE_SIZE) == static_cast<int>(px / TILE_SIZE) && 
+        static_cast<int>(y / TILE_SIZE) == static_cast<int>(py / TILE_SIZE)) {
+        return true;
+    }
+    return false;
 }
 
 void Minotaur::draw() { DrawCube({x, 0.0f, y}, 1.0f, 1.0f, 1.0f, RED); }
