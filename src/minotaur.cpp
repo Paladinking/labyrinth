@@ -175,7 +175,7 @@ bool Minotaur::tick(Maze &maze, float px, float py, float p_raduis) {
             path.clear();
             path.push_back(rush);
             std::cout << "Rush from " << x << ',' << y << " to " << rush.x << ',' << rush.y << std::endl;
-            move_speed 1.0f;
+            move_speed = 1.0f;
             rushing = true;
         }
     }
