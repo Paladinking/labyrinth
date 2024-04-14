@@ -37,11 +37,15 @@ int main(void) {
     float amb_light[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
     SetShaderValue(shader, ambientLoc, amb_light, SHADER_UNIFORM_VEC4);
     wall.materials[1].shader = shader;
-    Model cube = LoadModelFromMesh(GenMeshCube(2.0f, 4.0f, 2.0f));
-    cube.materials[0].shader = shader;
+
     Light lights[MAX_LIGHTS] = { 0 };
-    lights[0] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), BLUE, shader);
-    lights[1] = CreateLight(LIGHT_DIRECTIONAL, (Vector3){1, -1.0f, 1}, Vector3Zero(), RED, shader);
+    float offset = 7;
+    lights[0] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
+    lights[1] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 1 * offset, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
+    lights[2] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 2 * offset, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
+    lights[3] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 3 * offset, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
+    lights[4] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 4 * offset, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
+    // lights[1] = CreateLight(LIGHT_DIRECTIONAL, (Vector3){1, -1.0f, 1}, Vector3Zero(), RED, shader);
     // ^^^^^^^ FOR SHADERS =======================
     
     Maze maze{&wall};
