@@ -328,6 +328,7 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
     # Add resources building if required
     ifeq ($(BUILD_WEB_RESOURCES),TRUE)
         LDFLAGS += --preload-file $(BUILD_WEB_RESOURCES_PATH)
+        LDFLAGS += --preload-file ../assets
     endif
     
     # Add debug mode flags if required
