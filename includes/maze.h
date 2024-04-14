@@ -19,6 +19,8 @@ public:
 
     bool free_at(float x, float y, float radius);
 
+    void adjust_movement(float x, float y, float& dx, float& dy, float radius);
+
     Maze();
 
     void draw();

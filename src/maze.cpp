@@ -1,6 +1,8 @@
 #include "maze.h"
 #include <unordered_set>
+#include <algorithm>
 #include <iostream>
+#include <raymath.h>
 
 void generate_maze(Maze &maze) {
     std::vector<std::array<bool, TILE_HEIGHT>> visited{};
@@ -152,12 +154,15 @@ void Maze::draw() {
     }
 }
 
-bool Maze::free_at(float x, float y, float radius) {
-    float x_cors[] = {x + radius, x + radius, x - radius, x - radius};
-    float y_cors[] = {y + radius, y - radius, y + radius, y - radius};
+void Maze::adjust_movement(float x, float y, float &dx, float &dy, float radius) {
+    float x_adj[] = {1, 1, -1, -1};
+    float y_adj[] = {1, -1, 1, -1};
+    int c = 0;
     for (int i = 0; i < TILE_SIZE; ++i) {
-        int tx = x_cors[i] / TILE_SIZE;
-        int ty = y_cors[i] / TILE_SIZE;
+        float new_x = x + dx + radius * x_adj[i];
+        float new_y = y + dy + radius * y_adj[i];
+        int tx = new_x / TILE_SIZE;
+        int ty = new_y / TILE_SIZE;
         if (tx < 0 || ty < 0 || tx >= TILE_WIDTH || ty >= TILE_HEIGHT) {
             continue;
         }
@@ -165,10 +170,28 @@ bool Maze::free_at(float x, float y, float radius) {
             continue;
         }
         Rectangle r = {tx * TILE_SIZE, ty * TILE_SIZE, TILE_SIZE, TILE_SIZE};
-        if (CheckCollisionCircleRec({x, y}, radius, r)) {
-            return false;
+        if (!CheckCollisionCircleRec({x + dx, y + dy}, radius, r)) {
+            continue;
         }
+        // Get closest point to circle on rectangle
+        float nx = std::clamp(x + dx, r.x, r.x + r.width);
+        float ny = std::clamp(y + dy, r.y, r.y + r.height);
+            
+        // Get vector from position to nearest point.
+        Vector2 ray = {nx - (x + dx), ny - (y + dy)};
+            
+        // Get vector from position to where circle meets rectangle.
+        float adjust = radius - Vector2Length(ray);
+        ray = Vector2Scale(Vector2Normalize(ray), -adjust); 
+        dx += ray.x;
+        dy += ray.y;
+        i = 0;
+        ++c;
+        if (c > 20) return;
     }
-    return true;
+}
+
+bool Maze::free_at(float x, float y, float radius) {
+    return false;
 }
 
