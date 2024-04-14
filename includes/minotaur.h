@@ -5,7 +5,7 @@
 
 class Minotaur {
 public:
-    Minotaur(float x, float y);
+    Minotaur(float x, float y, Maze& maze);
 
     void draw();
 
@@ -15,7 +15,7 @@ public:
 
     void unload_animation_stuff();
 
-    void reset(float x, float y);
+    void reset(float x, float y, Maze& maze);
 private:
     void calculate_path(Maze& maze, float px, float py);
 

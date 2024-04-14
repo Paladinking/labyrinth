@@ -69,7 +69,7 @@ int main(void) {
     camera.projection = CAMERA_PERSPECTIVE; // Camera projection type
     int cameraMode = CAMERA_FIRST_PERSON;
 
-    Minotaur enemy{start_pos.x + TILE_SIZE, start_pos.y};
+    Minotaur enemy{start_pos.x + TILE_SIZE, start_pos.y, maze};
     enemy.load_animation_stuff();
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
@@ -95,7 +95,7 @@ int main(void) {
             camera.fovy = 60.0f; // Camera field-of-view Y
             camera.projection = CAMERA_PERSPECTIVE; // Camera projection type
 
-            enemy.reset(start_pos.x + TILE_SIZE, start_pos.y);
+            enemy.reset(start_pos.x + TILE_SIZE, start_pos.y, maze);
             alive = true;
             won = false;
             rolled = 0.0f;

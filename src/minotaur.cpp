@@ -6,7 +6,7 @@
 #include <queue>
 #include <unordered_set>
 
-Minotaur::Minotaur(float x, float y) : x(x), y(y), last_update(0), anims_count{0}, anim_index{2}, anim_current_frame{0} {}
+Minotaur::Minotaur(float x, float y, Maze& maze) : x(x), y(y), last_update(0), anims_count{0}, anim_index{2}, anim_current_frame{0} {reset(x, y, maze);}
 
 void Minotaur::calculate_path(Maze &maze, float px, float py) {
     int tx = px / TILE_SIZE;
@@ -191,12 +191,21 @@ bool Minotaur::tick(Maze &maze, float px, float py, float p_raduis) {
     return false;
 }
 
-void Minotaur::reset(float x, float y) {
-    x = x;
-    y = y;
+void Minotaur::reset(float x, float y, Maze& maze) {
     path.clear();
     rushing = false;
     last_update = 0;
+    int px, py;
+    while (1) {
+        px = GetRandomValue(1, MAZE_WIDTH - 2);
+        py = GetRandomValue(1, MAZE_HEIGHT - 2);
+        if (maze.at(px, py)){
+            continue;
+        }
+        break;
+    }
+    this->x = px * TILE_SIZE + TILE_SIZE / 2;
+    this->y = py * TILE_SIZE + TILE_SIZE / 2;
 }
 
 void Minotaur::load_animation_stuff() {
