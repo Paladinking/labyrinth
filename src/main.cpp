@@ -40,11 +40,7 @@ int main(void) {
 
     Light lights[MAX_LIGHTS] = { 0 };
     float offset = 7;
-    lights[0] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 0 * offset, TILE_SIZE * 2, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
-    lights[1] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 1 * offset, TILE_SIZE * 2, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
-    lights[2] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 2 * offset, TILE_SIZE * 2, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
-    lights[3] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 3 * offset, TILE_SIZE * 2, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
-    lights[4] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 4 * offset, TILE_SIZE * 2, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), WHITE, shader);
+    lights[0] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2 + 0 * offset, TILE_SIZE * 2, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), YELLOW, shader);
     // ^^^^^^^ FOR SHADERS =======================
     
     Maze maze{&wall};
@@ -97,6 +93,9 @@ int main(void) {
 
         float cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
         SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
+       
+        lights[0].position = Vector3{cameraPos[0], TILE_SIZE, cameraPos[2]};
+
         for (int i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(shader, lights[i]);
 
         Vector3 forward = GetCameraForward(&camera);
