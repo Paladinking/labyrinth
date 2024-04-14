@@ -191,6 +191,14 @@ bool Minotaur::tick(Maze &maze, float px, float py, float p_raduis) {
     return false;
 }
 
+void Minotaur::reset(float x, float y) {
+    x = x;
+    y = y;
+    path.clear();
+    rushing = false;
+    last_update = 0;
+}
+
 void Minotaur::load_animation_stuff() {
     model = LoadModel("assets/minotaur.m3d");
     model_animations = LoadModelAnimations("assets/minotaur.m3d", &anims_count);

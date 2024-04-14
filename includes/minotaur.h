@@ -15,6 +15,7 @@ public:
 
     void unload_animation_stuff();
 
+    void reset(float x, float y);
 private:
     void calculate_path(Maze& maze, float px, float py);
 

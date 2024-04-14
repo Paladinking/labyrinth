@@ -15,6 +15,8 @@
     #define GLSL_VERSION            330
 #endif
 
+
+
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
@@ -83,6 +85,22 @@ int main(void) {
     // Main game loop
     while (!WindowShouldClose()) // Detect window close button or ESC key
     {
+        if (IsKeyDown(KEY_R)) {
+            Vector2 start_pos = maze.get_start();
+            camera.position = {start_pos.x, 2.0f, start_pos.y}; // Camera position
+            camera.target = {TILE_SIZE + start_pos.x, 2.0f, start_pos.y};   // Camera looking at point
+
+            camera.up = {0.0f, 1.0f,
+                         0.0f};  // Camera up vector (rotation towards target)
+            camera.fovy = 60.0f; // Camera field-of-view Y
+            camera.projection = CAMERA_PERSPECTIVE; // Camera projection type
+
+            enemy.reset(start_pos.x + TILE_SIZE, start_pos.y);
+            alive = true;
+            won = false;
+            rolled = 0.0f;
+            move_speed = 0.3f;
+        }
         float dx, dy, rot_x, rot_y;
         if (IsGamepadAvailable(0)) {
             dx = -GetGamepadAxisMovement(0, GAMEPAD_AXIS_LEFT_Y);
