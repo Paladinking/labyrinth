@@ -5,7 +5,7 @@ find_package(raylib CONFIG REQUIRED)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(main src/main.cpp src/maze.cpp)
+add_executable(main src/main.cpp src/maze.cpp src/minotaur.cpp)
 
 add_executable(custom_camera examples/custom_camera.cpp)
 add_executable(sounds_ex examples/sound_ex.cpp src/sound.cpp)

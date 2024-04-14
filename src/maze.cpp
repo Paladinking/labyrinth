@@ -136,11 +136,19 @@ void generate_maze(Maze &maze) {
             }
         }
     } while (marked < MAZE_WIDTH * MAZE_HEIGHT);
+
 }
 
-Maze::Maze(Model* wall) : map{MAZE_WIDTH}, wall{wall} { generate_maze(*this); }
+Maze::Maze(Model* wall) : map{MAZE_WIDTH}, wall{wall} { 
+    generate_maze(*this);
+}
 
-void Maze::draw() {
+Vector2 Maze::get_start() const {
+    return {TILE_SIZE / 2, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2 };
+
+}
+
+void Maze::draw(Camera* camera) {
     for (int i = 0; i < map.size(); i++) {
         for (int j = 0; j < map[0].size(); j++) {
             if (map[i][j]) {
@@ -185,9 +193,5 @@ void Maze::adjust_movement(float x, float y, float &dx, float &dy, float radius)
         dx += ray.x;
         dy += ray.y;
     }
-}
-
-bool Maze::free_at(float x, float y, float radius) {
-    return false;
 }
 

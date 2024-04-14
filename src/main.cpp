@@ -1,5 +1,6 @@
 #define RLIGHTS_IMPLEMENTATION
 #include "maze.h"
+#include "minotaur.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "rlights.h"
@@ -34,19 +35,25 @@ int main(void) {
     Model cube = LoadModelFromMesh(GenMeshCube(2.0f, 4.0f, 2.0f));
     cube.materials[0].shader = shader;
     Light lights[MAX_LIGHTS] = { 0 };
-    lights[0] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), BLUE, shader);
+    lights[0] = CreateLight(LIGHT_POINT, {TILE_SIZE / 2, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), BLUE, shader);
     // ^^^^^^^ FOR SHADERS =======================
     
     Maze maze{&wall};
 
     Camera camera = {0};
-    camera.position = {TILE_SIZE / 2, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}; // Camera position
-    camera.target = {TILE_SIZE + TILE_SIZE / 2, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2};   // Camera looking at point
+
+    Vector2 start_pos = maze.get_start();
+    camera.position = {start_pos.x, 2.0f, start_pos.y}; // Camera position
+    camera.target = {TILE_SIZE + start_pos.x, 2.0f, start_pos.y};   // Camera looking at point
+
     camera.up = {0.0f, 1.0f,
                  0.0f};  // Camera up vector (rotation towards target)
     camera.fovy = 60.0f; // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE; // Camera projection type
     int cameraMode = CAMERA_FIRST_PERSON;
+
+    Minotaur enemy{start_pos.x + TILE_SIZE, start_pos.y};
+
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
     DisableCursor();  // Limit cursor to relative movement inside the window
 
@@ -74,8 +81,6 @@ int main(void) {
             dy *= 0.1;
             rot_x *= 1.7;
             rot_y *= 1.7;
-            //UpdateCameraPro(&camera, {move_x, move_y, 0.0f},
-            //                {rot_x, rot_y, 0.0f}, GetMouseWheelMove() * 2.0f);
         } else {
             dx = (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) * move_speed - 
                  (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) * move_speed;
@@ -104,6 +109,8 @@ int main(void) {
         camera.position = Vector3Add(movement, camera.position);
         camera.target = Vector3Add(movement, camera.target);
 
+        enemy.tick(maze, camera.position.x, camera.position.z, 1.0f);
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
@@ -113,9 +120,11 @@ int main(void) {
           if (lights[i].enabled) DrawSphereEx(lights[i].position, 0.2f, 8, 8, lights[i].color);
           else DrawSphereWires(lights[i].position, 0.2f, 8, 8, ColorAlpha(lights[i].color, 0.3f));
         }
-        maze.draw();
+        maze.draw(&camera);
+        enemy.draw();
         DrawModelEx(wall, {0,0,0}, {0,0,0}, 0, {5,5,5}, WHITE);
 
+        DrawModelEx(wall, {0, 0, 0}, {0, 0, 0}, 0, {5, 5, 5}, WHITE);
 
         EndMode3D();
 
