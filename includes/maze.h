@@ -21,6 +21,7 @@ public:
     bool free_at(float x, float y, float radius);
 
     Maze(Model* wall);
+    void adjust_movement(float x, float y, float& dx, float& dy, float radius);
 
     void draw();
 };
