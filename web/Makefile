@@ -28,6 +28,7 @@
 PROJECT_SOURCE_FILES ?= \
     main.cpp \
 	maze.cpp \
+	minotaur.cpp \
 	sound.cpp
 
 EMSDK_PATH         ?= ../../emsdk
