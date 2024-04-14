@@ -24,6 +24,7 @@ int main(void) {
     const int screenHeight = 800;
 
     SetConfigFlags(FLAG_VSYNC_HINT);
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight,
                "raylib [core] example - 3d camera first person");
 
