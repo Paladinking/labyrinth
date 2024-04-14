@@ -82,7 +82,7 @@ bool Minotaur::can_rush_player(Maze& maze, float px, float py, float dx, float d
             }
         }
         int endx = ptx;
-        while (!maze.at(endx + 1, ty)) {
+        while (!maze.at(endx + 1, ty) && endx < MAZE_WIDTH - 2) {
             ++endx;
         }
         end.x = TILE_SIZE * endx + TILE_SIZE / 2;
@@ -97,7 +97,7 @@ bool Minotaur::can_rush_player(Maze& maze, float px, float py, float dx, float d
             }
         }
         int endx = ptx;
-        while (!maze.at(endx - 1, ty)) {
+        while (!maze.at(endx - 1, ty) && endx > 1) {
             --endx;
         }
         end.x = TILE_SIZE * endx + TILE_SIZE / 2;
@@ -113,7 +113,7 @@ bool Minotaur::can_rush_player(Maze& maze, float px, float py, float dx, float d
             }
         }
         int endy = pty;
-        while (!maze.at(tx, endy + 1)) {
+        while (!maze.at(tx, endy + 1) && endy < MAZE_HEIGHT - 2) {
             ++endy;
         }
         end.y = TILE_SIZE * endy + TILE_SIZE / 2;
@@ -128,7 +128,7 @@ bool Minotaur::can_rush_player(Maze& maze, float px, float py, float dx, float d
             }
         }
         int endy = pty;
-        while (!maze.at(tx, endy - 1)) {
+        while (!maze.at(tx, endy - 1) && endy > 1) {
             --endy;
         }
         end.y = TILE_SIZE * endy + TILE_SIZE / 2;
