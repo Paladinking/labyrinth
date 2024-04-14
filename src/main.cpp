@@ -1,5 +1,8 @@
+#define RLIGHTS_IMPLEMENTATION
 #include "maze.h"
 #include "raylib.h"
+#include "raymath.h"
+#include "rlights.h"
 #include "rcamera.h"
 #include <cstdlib>
 #include <iostream>
@@ -20,11 +23,26 @@ int main(void) {
 
     std::cout << "Generate done" << std::endl;
     Model wall = LoadModel("assets/wall.glb");
-    Maze maze{};
+
+    // FOR SHADERS =======================
+    Shader shader = LoadShader("resources/shaders/glsl330/lighting.vs",
+                               "resources/shaders/glsl330/lighting.fs");
+    shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
+    int ambientLoc = GetShaderLocation(shader, "ambient");
+    float amb_light[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
+    SetShaderValue(shader, ambientLoc, amb_light, SHADER_UNIFORM_VEC4);
+    wall.materials[1].shader = shader;
+    Model cube = LoadModelFromMesh(GenMeshCube(2.0f, 4.0f, 2.0f));
+    cube.materials[0].shader = shader;
+    Light lights[MAX_LIGHTS] = { 0 };
+    lights[0] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), BLUE, shader);
+    // ^^^^^^^ FOR SHADERS =======================
+    
+    Maze maze{&wall};
 
     Camera camera = {0};
-    camera.position = {TILE_SIZE / 2, 2.0f, TILE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}; // Camera position
-    camera.target = {TILE_SIZE + TILE_SIZE / 2, 2.0f, TILE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2};   // Camera looking at point
+    camera.position = {TILE_SIZE / 2, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}; // Camera position
+    camera.target = {TILE_SIZE + TILE_SIZE / 2, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2};   // Camera looking at point
     camera.up = {0.0f, 1.0f,
                  0.0f};  // Camera up vector (rotation towards target)
     camera.fovy = 60.0f; // Camera field-of-view Y
@@ -79,14 +97,22 @@ int main(void) {
             camera = old_pos;
         }
 
+        float cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
+        SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
+        for (int i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(shader, lights[i]);
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
         BeginMode3D(camera);
+        for (int i = 0; i < MAX_LIGHTS; i++)
+        {
+          if (lights[i].enabled) DrawSphereEx(lights[i].position, 0.2f, 8, 8, lights[i].color);
+          else DrawSphereWires(lights[i].position, 0.2f, 8, 8, ColorAlpha(lights[i].color, 0.3f));
+        }
         maze.draw();
+        DrawModelEx(wall, {0,0,0}, {0,0,0}, 0, {5,5,5}, WHITE);
 
-        DrawModelEx(wall, {0, 0, 0}, {0, 0, 0}, 0, {5, 5, 5}, WHITE);
-        // Draw some cubes around
 
         EndMode3D();
 

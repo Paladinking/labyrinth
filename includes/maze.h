@@ -1,7 +1,7 @@
 #pragma once
 
-constexpr int TILE_HEIGHT = 80;
-constexpr int TILE_WIDTH = 80;
+constexpr int MAZE_HEIGHT = 80;
+constexpr int MAZE_WIDTH = 80;
 constexpr float TILE_SIZE = 4.0f;
 
 #include <array>
@@ -12,14 +12,15 @@ enum Direction : int { LEFT = 0, UP = 1, RIGHT = 2, DOWN = 3 };
 
 class Maze {
 private:
-    std::vector<std::array<bool, TILE_HEIGHT>> map;
+    std::vector<std::array<bool, MAZE_HEIGHT>> map;
+    Model* wall;
 
 public:
     bool &at(unsigned x, unsigned y) { return map[x][y]; }
 
     bool free_at(float x, float y, float radius);
 
-    Maze();
+    Maze(Model* wall);
 
     void draw();
 };

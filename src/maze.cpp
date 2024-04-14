@@ -3,27 +3,27 @@
 #include <iostream>
 
 void generate_maze(Maze &maze) {
-    std::vector<std::array<bool, TILE_HEIGHT>> visited{};
-    visited.resize(TILE_WIDTH);
+    std::vector<std::array<bool, MAZE_HEIGHT>> visited{};
+    visited.resize(MAZE_WIDTH);
 
     std::vector<int> potential_roots{};
     std::unordered_set<int> invalid_roots{};
 
-    for (int x = 0; x < TILE_WIDTH; ++x) {
+    for (int x = 0; x < MAZE_WIDTH; ++x) {
         maze.at(x, 0) = true;
-        maze.at(x, TILE_HEIGHT - 1) = true;
+        maze.at(x, MAZE_HEIGHT - 1) = true;
         invalid_roots.insert(x);
-        invalid_roots.insert(x + TILE_WIDTH * (TILE_HEIGHT - 1));
+        invalid_roots.insert(x + MAZE_WIDTH * (MAZE_HEIGHT - 1));
     }
-    for (int y = 1; y < TILE_HEIGHT - 1; ++y) {
+    for (int y = 1; y < MAZE_HEIGHT - 1; ++y) {
         maze.at(0, y) = true;
-        maze.at(TILE_WIDTH - 1, y) = true;
-        invalid_roots.insert(y * TILE_WIDTH);
-        invalid_roots.insert(TILE_WIDTH - 1 + y * TILE_WIDTH);
+        maze.at(MAZE_WIDTH - 1, y) = true;
+        invalid_roots.insert(y * MAZE_WIDTH);
+        invalid_roots.insert(MAZE_WIDTH - 1 + y * MAZE_WIDTH);
     }
 
     int x = 0;
-    int y = TILE_HEIGHT / 2;
+    int y = MAZE_HEIGHT / 2;
     maze.at(x, y) = false;
     ++x;
     enum Direction : int { LEFT = 0, UP = 1, RIGHT = 2, DOWN = 3 };
@@ -39,8 +39,8 @@ void generate_maze(Maze &maze) {
                  &potential_roots](auto &maze, int x, int y) -> bool & {
         if (!visited[x][y]) {
             ++marked;
-            if (invalid_roots.count(x + TILE_WIDTH * y) == 0) {
-                potential_roots.push_back(x + TILE_WIDTH * y);
+            if (invalid_roots.count(x + MAZE_WIDTH * y) == 0) {
+                potential_roots.push_back(x + MAZE_WIDTH * y);
             }
         }
         visited[x][y] = true;
@@ -87,8 +87,8 @@ void generate_maze(Maze &maze) {
             maze.at(x + dx(side), y + dy(side)) = true;
             maze.at(x - dx(side), y - dy(side)) = true;
             prev_side = side;
-            if (x == 0 || y == 0 || x == TILE_WIDTH - 1 ||
-                y == TILE_HEIGHT - 1) {
+            if (x == 0 || y == 0 || x == MAZE_WIDTH - 1 ||
+                y == MAZE_HEIGHT - 1) {
                 maze.at(x, y) = true;
                 break;
             }
@@ -99,8 +99,8 @@ void generate_maze(Maze &maze) {
             }
             int ix = GetRandomValue(0, potential_roots.size() - 1);
             int root = potential_roots[ix];
-            x = potential_roots[ix] % TILE_WIDTH;
-            y = potential_roots[ix] / TILE_WIDTH;
+            x = potential_roots[ix] % MAZE_WIDTH;
+            y = potential_roots[ix] / MAZE_WIDTH;
             potential_roots[ix] = potential_roots[potential_roots.size() - 1];
             potential_roots.pop_back();
             int v = GetRandomValue(0, 3);
@@ -113,8 +113,8 @@ void generate_maze(Maze &maze) {
                     !maze.at(x - dx(side), y - dy(side))) {
                     continue;
                 }
-                if (x + dx(dir) == 0 || x + dx(dir) == TILE_WIDTH - 1 ||
-                    y + dy(dir) == 0 || y + dy(dir) == TILE_HEIGHT - 1) {
+                if (x + dx(dir) == 0 || x + dx(dir) == MAZE_WIDTH - 1 ||
+                    y + dy(dir) == 0 || y + dy(dir) == MAZE_HEIGHT - 1) {
                     continue;
                 }
                 if (visited[x + dx(dir)][y + dy(dir)]) {
@@ -133,10 +133,10 @@ void generate_maze(Maze &maze) {
                 break;
             }
         }
-    } while (marked < TILE_WIDTH * TILE_HEIGHT);
+    } while (marked < MAZE_WIDTH * MAZE_HEIGHT);
 }
 
-Maze::Maze() : map{TILE_WIDTH} { generate_maze(*this); }
+Maze::Maze(Model* wall) : map{MAZE_WIDTH}, wall{wall} { generate_maze(*this); }
 
 void Maze::draw() {
     for (int i = 0; i < map.size(); i++) {
@@ -146,7 +146,7 @@ void Maze::draw() {
                 float cube_height{7};
                 Vector3 cubePosition = {TILE_SIZE * i + TILE_SIZE / 2, 0.0f,
                                         TILE_SIZE * j + TILE_SIZE / 2};
-                DrawCube(cubePosition, TILE_SIZE, cube_height, TILE_SIZE, color);
+                DrawModelEx(*wall, cubePosition, {0, 0, 0}, 0, {TILE_SIZE, TILE_SIZE, TILE_SIZE}, WHITE);
             }
         }
     }
@@ -158,7 +158,7 @@ bool Maze::free_at(float x, float y, float radius) {
     for (int i = 0; i < TILE_SIZE; ++i) {
         int tx = x_cors[i] / TILE_SIZE;
         int ty = y_cors[i] / TILE_SIZE;
-        if (tx < 0 || ty < 0 || tx >= TILE_WIDTH || ty >= TILE_HEIGHT) {
+        if (tx < 0 || ty < 0 || tx >= MAZE_WIDTH || ty >= MAZE_HEIGHT) {
             continue;
         }
         if (!at(tx, ty)) {
