@@ -157,7 +157,6 @@ void Maze::draw() {
 void Maze::adjust_movement(float x, float y, float &dx, float &dy, float radius) {
     float x_adj[] = {1, 1, -1, -1};
     float y_adj[] = {1, -1, 1, -1};
-    int c = 0;
     for (int i = 0; i < TILE_SIZE; ++i) {
         float new_x = x + dx + radius * x_adj[i];
         float new_y = y + dy + radius * y_adj[i];
@@ -185,9 +184,6 @@ void Maze::adjust_movement(float x, float y, float &dx, float &dy, float radius)
         ray = Vector2Scale(Vector2Normalize(ray), -adjust); 
         dx += ray.x;
         dy += ray.y;
-        i = 0;
-        ++c;
-        if (c > 20) return;
     }
 }
 
