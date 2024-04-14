@@ -166,9 +166,8 @@ int main(void) {
           else DrawSphereWires(lights[i].position, 0.2f, 8, 8, ColorAlpha(lights[i].color, 0.3f));
         }
         maze.draw(&camera);
-        DrawModelEx(wall, {0,0,0}, {0,0,0}, 0, {5,5,5}, WHITE);
 
-        DrawModelEx(wall, {0, 0, 0}, {0, 0, 0}, 0, {5, 5, 5}, WHITE);
+        DrawModelEx(trophy, Vector3{maze.victory_con.first * TILE_SIZE + TILE_SIZE / 2, 0, maze.victory_con.second * TILE_SIZE + TILE_SIZE / 2}, {0,0,0}, 0.0, {15,15,15}, WHITE);
 
         enemy.draw();
 

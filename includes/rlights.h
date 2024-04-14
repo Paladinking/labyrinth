@@ -39,7 +39,6 @@
 // Defines and Macros
 //----------------------------------------------------------------------------------
 #define MAX_LIGHTS  4        // Max dynamic lights supported by shader
-#define MAX_LIGHTS  5         // Max dynamic lights supported by shader
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
