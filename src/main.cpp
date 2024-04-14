@@ -7,6 +7,12 @@
 #include <cstdlib>
 #include <iostream>
 
+#if defined(PLATFORM_WEB)  // PLATFORM_ANDROID, PLATFORM_WEB
+    #define GLSL_VERSION            100
+#else
+    #define GLSL_VERSION            330
+#endif
+
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
@@ -24,8 +30,8 @@ int main(void) {
     Model wall = LoadModel("assets/wall.glb");
 
     // FOR SHADERS =======================
-    Shader shader = LoadShader("resources/shaders/glsl330/lighting.vs",
-                               "resources/shaders/glsl330/lighting.fs");
+    Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/lighting.vs", GLSL_VERSION),
+                               TextFormat("resources/shaders/glsl%i/lighting.fs", GLSL_VERSION));
     shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
     int ambientLoc = GetShaderLocation(shader, "ambient");
     float amb_light[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
@@ -35,6 +41,7 @@ int main(void) {
     cube.materials[0].shader = shader;
     Light lights[MAX_LIGHTS] = { 0 };
     lights[0] = CreateLight(LIGHT_POINT, (Vector3){TILE_SIZE / 2, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), BLUE, shader);
+    lights[1] = CreateLight(LIGHT_DIRECTIONAL, (Vector3){1, -1.0f, 1}, Vector3Zero(), RED, shader);
     // ^^^^^^^ FOR SHADERS =======================
     
     Maze maze{&wall};
