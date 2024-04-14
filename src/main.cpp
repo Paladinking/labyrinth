@@ -8,6 +8,12 @@
 #include <cstdlib>
 #include <iostream>
 
+#if defined(PLATFORM_WEB)  // PLATFORM_ANDROID, PLATFORM_WEB
+    #define GLSL_VERSION            100
+#else
+    #define GLSL_VERSION            330
+#endif
+
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
@@ -25,17 +31,17 @@ int main(void) {
     Model wall = LoadModel("assets/wall.glb");
 
     // FOR SHADERS =======================
-    Shader shader = LoadShader("resources/shaders/glsl330/lighting.vs",
-                               "resources/shaders/glsl330/lighting.fs");
+    Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/lighting.vs", GLSL_VERSION),
+                               TextFormat("resources/shaders/glsl%i/lighting.fs", GLSL_VERSION));
     shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
     int ambientLoc = GetShaderLocation(shader, "ambient");
     float amb_light[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
     SetShaderValue(shader, ambientLoc, amb_light, SHADER_UNIFORM_VEC4);
     wall.materials[1].shader = shader;
-    Model cube = LoadModelFromMesh(GenMeshCube(2.0f, 4.0f, 2.0f));
-    cube.materials[0].shader = shader;
+
     Light lights[MAX_LIGHTS] = { 0 };
-    lights[0] = CreateLight(LIGHT_POINT, {TILE_SIZE / 2, 2.0f, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), BLUE, shader);
+    float offset = 7;
+    lights[0] = CreateLight(LIGHT_POINT, {TILE_SIZE / 2 + 0 * offset, TILE_SIZE * 2, MAZE_HEIGHT / 2 * TILE_SIZE + TILE_SIZE / 2}, Vector3Zero(), YELLOW, shader);
     // ^^^^^^^ FOR SHADERS =======================
     
     Maze maze{&wall};
@@ -92,6 +98,9 @@ int main(void) {
 
         float cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
         SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
+       
+        lights[0].position = Vector3{cameraPos[0], TILE_SIZE, cameraPos[2]};
+
         for (int i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(shader, lights[i]);
 
         Vector3 forward = GetCameraForward(&camera);

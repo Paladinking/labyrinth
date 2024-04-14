@@ -1,7 +1,6 @@
 #include "maze.h"
 #include <unordered_set>
 #include <algorithm>
-#include <iostream>
 #include <raymath.h>
 
 void generate_maze(Maze &maze) {
@@ -156,7 +155,7 @@ void Maze::draw(Camera* camera) {
                 float cube_height{7};
                 Vector3 cubePosition = {TILE_SIZE * i + TILE_SIZE / 2, 0.0f,
                                         TILE_SIZE * j + TILE_SIZE / 2};
-                DrawModelEx(*wall, cubePosition, {0, 0, 0}, 0, {TILE_SIZE, TILE_SIZE, TILE_SIZE}, WHITE);
+                DrawModelEx(*wall, cubePosition, {0, 0, 0}, 0, {TILE_SIZE/2 , TILE_SIZE/2, TILE_SIZE/2}, WHITE);
             }
         }
     }
