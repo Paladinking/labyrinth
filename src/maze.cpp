@@ -1,7 +1,12 @@
 #include "maze.h"
+#include <raylib.h>
 #include <unordered_set>
 #include <algorithm>
 #include <raymath.h>
+
+void Maze::set(int x, int y, bool val){
+    map[x][y] = val; 
+}
 
 void generate_maze(Maze &maze) {
     std::vector<std::array<bool, MAZE_HEIGHT>> visited{};
@@ -138,8 +143,49 @@ void generate_maze(Maze &maze) {
 
 }
 
+void create_win_con(Maze &maze){
+    bool done{false};
+    while (!done){
+        int x = GetRandomValue(5, MAZE_WIDTH - 6);
+        int y = GetRandomValue(5, MAZE_HEIGHT - 6);
+        if (maze.at(x, y)){
+            continue;
+        }
+
+        maze.set(x - 2, y - 2, false);
+        maze.set(x - 1, y - 2, false);
+        maze.set(x + 0, y - 2, false);
+        maze.set(x + 1, y - 2, false);
+        maze.set(x + 2, y - 2, false);
+        maze.set(x - 2, y - 1, false);
+        maze.set(x - 1, y - 1, false);
+        maze.set(x + 0, y - 1, false);
+        maze.set(x + 1, y - 1, false);
+        maze.set(x + 2, y - 1, false);
+        maze.set(x - 2, y + 0, false);
+        maze.set(x - 1, y + 0, false);
+        maze.set(x + 0, y + 0, false);
+        maze.set(x + 1, y + 0, false);
+        maze.set(x + 2, y + 0, false);
+        maze.set(x - 2, y + 1, false);
+        maze.set(x - 1, y + 1, false);
+        maze.set(x + 0, y + 1, false);
+        maze.set(x + 1, y + 1, false);
+        maze.set(x + 2, y + 1, false);
+        maze.set(x - 2, y + 2, false);
+        maze.set(x - 1, y + 2, false);
+        maze.set(x + 0, y + 2, false);
+        maze.set(x + 1, y + 2, false);
+        maze.set(x + 2, y + 2, false);
+
+        maze.victory_con = {x, y};
+        done = true;
+    }
+}
+
 Maze::Maze(Model* wall) : map{MAZE_WIDTH}, wall{wall} { 
     generate_maze(*this);
+    create_win_con(*this);
 }
 
 Vector2 Maze::get_start() const {

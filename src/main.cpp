@@ -49,7 +49,7 @@ int main(void) {
     Camera camera = {0};
 
     Vector2 start_pos = maze.get_start();
-    camera.position = {start_pos.x, 2.0f, start_pos.y}; // Camera position
+    camera.position = {start_pos.x, 20.0f, start_pos.y}; // Camera position
     camera.target = {TILE_SIZE + start_pos.x, 2.0f, start_pos.y};   // Camera looking at point
 
     camera.up = {0.0f, 1.0f,
@@ -65,6 +65,7 @@ int main(void) {
 
     float move_speed = 0.3;
     bool alive = true;
+    bool won = false;
     float rolled = 0.0f;
 
     //--------------------------------------------------------------------------------------
@@ -131,6 +132,12 @@ int main(void) {
             std::cout << rolled << std::endl;
         }
 
+        // std::cout << "cam pos x:" << std::floor(cameraPos[0]/4) << std::endl;
+        // std::cout << "vic x: " << maze.victory_con.first << std::endl;
+        if (std::floor(cameraPos[0]/4) == maze.victory_con.first && std::floor(cameraPos[2]/4) == maze.victory_con.second){
+            won = true;
+        }
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
@@ -149,6 +156,8 @@ int main(void) {
         EndMode3D();
         if (!alive) {
             DrawText("Game Over", 200, 100, 40, RED);
+        } else if (won){
+            DrawText("YOU WON!", 200, 100, 40, GREEN);
         }
 
         EndDrawing();

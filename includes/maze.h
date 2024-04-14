@@ -1,7 +1,7 @@
 #pragma once
 
-constexpr int MAZE_HEIGHT = 40;
-constexpr int MAZE_WIDTH = 40;
+constexpr int MAZE_HEIGHT = 20;
+constexpr int MAZE_WIDTH = 20;
 constexpr float TILE_SIZE = 4.0f;
 
 #include <array>
@@ -17,6 +17,8 @@ private:
     Model* wall;
 
 public:
+    std::pair<int,int> victory_con;
+
     bool &at(unsigned x, unsigned y) { return map[x][y]; }
 
     Vector2 get_start() const;
@@ -25,4 +27,6 @@ public:
     void adjust_movement(float x, float y, float& dx, float& dy, float radius);
 
     void draw(Camera* camera);
+
+    void set(int x, int y, bool val);
 };
