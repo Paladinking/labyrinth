@@ -7,6 +7,7 @@
 #include "rcamera.h"
 #include <cstdlib>
 #include <iostream>
+#include "sound.h"
 
 #if defined(PLATFORM_WEB)  // PLATFORM_ANDROID, PLATFORM_WEB
     #define GLSL_VERSION            100
@@ -25,10 +26,18 @@ int main(void) {
 
     SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight,
-               "raylib [core] example - 3d camera first person");
+               "Labyrinth");
 
     std::cout << "Generate done" << std::endl;
     Model wall = LoadModel("assets/wall.glb");
+
+    Model trophy = LoadModel("assets/trophy.glb");
+
+    InitAudioDevice();
+    // MySound stepsWalk = MySound( { LoadSound("resources/Step1.mp3"), LoadSound("resources/Step2.mp3") , LoadSound("resources/Step3.mp3")});
+    MySound stepsRun = MySound( { LoadSound("resources/Run(1).mp3"), LoadSound("resources/Run(2).mp3") , LoadSound("resources/Run(2).mp3")});
+    MySound monsterSteps = MySound( { LoadSound("resources/M3Step(1).mp3"), LoadSound("resources/M3Step(2).mp3") });
+    MySound chainRattle = MySound( { LoadSound("resources/Chain(1).mp3"), LoadSound("resources/Chain(2).mp3"), LoadSound("resources/Chain(3).mp3"), LoadSound("resources/Chain(4).mp3") });
 
     // FOR SHADERS =======================
     Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/lighting.vs", GLSL_VERSION),
@@ -59,9 +68,11 @@ int main(void) {
     int cameraMode = CAMERA_FIRST_PERSON;
 
     Minotaur enemy{start_pos.x + TILE_SIZE, start_pos.y};
+    enemy.load_animation_stuff();
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
     DisableCursor();  // Limit cursor to relative movement inside the window
+    // if (!IsWindowFullscreen()) ToggleFullscreen();
 
     float move_speed = 0.3;
     bool alive = true;
@@ -113,6 +124,13 @@ int main(void) {
             right.y = 0;
             right = Vector3Scale(Vector3Normalize(right), dy);
             Vector3 movement = Vector3Add(forward, right);
+            if (movement.x != 0.0f || movement.y != 0.0f || movement.z != 0.0f) {
+                float len = sqrt(movement.x * movement.x + movement.y * movement.y + movement.z * movement.z);
+                movement.x = movement.x * move_speed / len;
+                movement.y = movement.y * move_speed / len;
+                movement.z = movement.z * move_speed / len;
+                stepsRun.PlayMySound();
+            }
             CameraPitch(&camera, -rot_y*DEG2RAD, true, false, false);
             CameraYaw(&camera, -rot_x*DEG2RAD, false);
 
@@ -148,10 +166,11 @@ int main(void) {
           else DrawSphereWires(lights[i].position, 0.2f, 8, 8, ColorAlpha(lights[i].color, 0.3f));
         }
         maze.draw(&camera);
-        enemy.draw();
         DrawModelEx(wall, {0,0,0}, {0,0,0}, 0, {5,5,5}, WHITE);
 
         DrawModelEx(wall, {0, 0, 0}, {0, 0, 0}, 0, {5, 5, 5}, WHITE);
+
+        enemy.draw();
 
         EndMode3D();
         if (!alive) {
@@ -162,6 +181,7 @@ int main(void) {
 
         EndDrawing();
     }
+    enemy.unload_animation_stuff();
     CloseWindow(); // Close window and OpenGL context
     return 0;
 }
